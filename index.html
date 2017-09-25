@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>多图上传预览</title>
+		<script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+		<style>
+			.show {
+				height: 500px;
+				width: 500px;
+				border: 1px solid #E3E3E3;
+				text-align: center;
+				margin: 100px auto;
+			}
+			.show li {
+				float: left;
+				display: inline-block;
+				width: 100px;
+				height: 100px;
+				border: 1px solid #333333;
+				margin: 40px 0 40px 40px;
+				background: url(img/add_person.png) no-repeat;
+				background-position: center;
+			}
+			.show li img {
+				height: 100%;
+				text-align: center;
+			}
+			form {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<!--<form method="post" action="index.shtml" enctype="multipart/form-data">-->
+		<form>
+			<input class="img" type="file" name="img1">
+			<input class="img" type="file" name="img2">
+			<input class="img" type="file" name="img3">
+		</form>
+		<ul class="show">
+			<li class="lishow"></li>
+			<li class="lishow"></li>
+			<li class="lishow"></li>
+		</ul>
+	</body>
+	<script>
+		$(function() {
+			$('input').on('change input', function() {
+				var me = this;
+				if (me.value) {
+					var img = new Image();
+					var getUrl = function(blob) {
+						return window[window.webkitURL ? 'webkitURL' : 'URL']['createObjectURL'](blob);
+					}
+					img.src = getUrl(this.files[0]);
+					var index = $(this).index();
+					img.onload = function() {
+						var canvas = document.createElement("canvas");
+						canvas.width = img.width * 0.6; //压缩比例0.6
+						canvas.height = img.height * 0.6;
+						var ctx = canvas.getContext("2d");
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
+						ctx.drawImage(img, 0, 0, canvas.width, canvas.height); //image转换为canvas
+						imgs = new Image()
+						imgs.src = canvas.toDataURL("image/png"); //canvas内容提取为图片
+						$('.lishow:eq(' + index + ')').append(imgs);
+					}
+				}
+			})
+			$('.show').on('click', 'li', function() {
+				var that = $(this);
+				var index = $(this).index()
+				$('.img:eq(' + index + ')').click();
+			})
+		})
+	</script>
+</html>
